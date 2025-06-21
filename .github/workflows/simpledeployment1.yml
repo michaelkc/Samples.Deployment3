@@ -1,0 +1,36 @@
+name: Simple Deployment 1
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        type: environment
+        required: true    
+      mode:
+        description: 'Optional mode (slow or fail)'
+        required: false
+        default: ''
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event.environment.name }}
+    steps:
+      - name: Start deployment
+        run: echo "Starting deployment to ${{ github.event.environment.name }}"
+
+      - name: Sleep if slow
+        if: ${{ github.event.inputs.mode == 'slow' }}
+        run: sleep 30
+
+      - name: Fail if requested
+        if: ${{ github.event.inputs.mode == 'fail' }}
+        run: |
+          echo "Failing as requested"
+          exit 1
+
+      - name: Complete deployment
+        if: ${{ github.event.inputs.mode != 'fail' }}
+        run: echo "Deployment completed successfully"
