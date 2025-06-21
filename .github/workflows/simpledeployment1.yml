@@ -94,7 +94,7 @@ jobs:
             const environmentUrl = process.env.GITHUB_ENVIRONMENT_URL;
 
             // Determine the state based on the outcome of the 'simulate_deployment' step
-            const deploymentSucceeded = steps.deploy.outcome === 'success';
+            const deploymentSucceeded = process.env.DEPLOYMENT_OUTCOME  === 'success';
 
             let state;
             let description;
@@ -121,6 +121,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Pass the deployment ID output from the previous step as an environment variable
           DEPLOYMENT_ID: ${{ steps.create_deployment.outputs.deployment_id }}
+          DEPLOYMENT_OUTCOME: ${{ steps.deploy.outcome }}
           GITHUB_ENVIRONMENT_URL: ${{ github.environment_url }}
 
       - name: Fail job if deployment simulation failed
